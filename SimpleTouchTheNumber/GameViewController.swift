@@ -9,22 +9,23 @@
 import UIKit
 
 class GameViewController: UIViewController {
+    
     @IBOutlet weak var readyScreenView: UIView!     // 「3,2,1」カウントダウン用の黒いスクリーン
     @IBOutlet weak var readyCountLabel: UILabel!    // 「3,2,1」カウントダウン用のラベル
-    var timerCountDown: NSTimer!                    // 「3,2,1」カウントダウン用タイマー
-    var numberCountDown = 3;                        // 「3,2,1」カウントダウン用のラベルに表示する数字
-    
     @IBOutlet weak var clearImage: UIImageView!     // "CLEAR" の画像
     @IBOutlet weak var startButton: UIButton!       // クリア後の"START"ボタン
     @IBOutlet weak var topButton: UIButton!         // クリア後の"TOP"ボタン
-    
-    @IBOutlet var numButton: [UIButton]!            // ゲーム中の1から9までのボタン
-    var positionArray = [1, 2, 3, 4, 5, 6, 7, 8, 9] // 1から9までのボタンをシャッフルするための配列
-    var indexNum = 1;                               // 次にタッチしなければならないボタンの数字
-    
     @IBOutlet weak var timerCountLabel: UILabel!    // ゲーム中のカウントアップ用ラベル
+    @IBOutlet var numButton: [UIButton]!    // ゲーム中の1から9までのボタン
+    
+    var timerCountDown: NSTimer!                    // 「3,2,1」カウントダウン用タイマー
+    var numberCountDown = 3;                        // 「3,2,1」カウントダウン用のラベルに表示する数字
+    
     var timerCountUp: NSTimer!                      // ゲーム中のカウントアップ用タイマー
     var numberCountUp = 0.0;                        // ゲーム中のカウントアップ用ラベルに表示する数字
+    
+    var positionArray = [1, 2, 3, 4, 5, 6, 7, 8, 9] // 1から9までのボタンをシャッフルするための配列
+    var indexNum = 1;                               // 次にタッチしなければならないボタンの数字
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,24 +54,17 @@ func start() {
     readyCountLabel.hidden = true
     readyScreenView.hidden = true
     
-    // まずボタンの色を選ぶ
-    let buttonColor = selectButtonColor()
-    
     // 配置のための配列をシャッフルをする
     shuffleArray()
+    
+    // まずボタンの色を選ぶ
+    let buttonColor = selectButtonColor()
     
     // シャッフルした配列にもとづいてボタンに1から9までの画像を貼り付ける
     setButtonImage(positionArray, color: buttonColor)
     
     // 0.01秒ごとに countUp を呼び出すタイマーを作成する
     timerCountUp = NSTimer.scheduledTimerWithTimeInterval(0.01, target: self, selector: Selector("countUp"), userInfo: nil, repeats: true)
-    }
-    
-    // まずはボタンの色をランダムに決める
-    func selectButtonColor() -> String {
-        let array = ["b", "g", "r"]
-        let num = Int(arc4random_uniform(UInt32(array.count)))
-        return array[num]
     }
     
     func shuffleArray() {
@@ -81,7 +75,7 @@ func start() {
             swap(&positionArray[k], &positionArray[j])
     }
 }
-
+    
     func setButtonImage(positionArray: [Int], color: String) {
         // positionArrayは1から9がシャッフルされた配列
         // numButtonはボタンの配列で、画面の左上から右下まで1から9まで順番になっている
@@ -90,14 +84,21 @@ func start() {
             let img:UIImage = UIImage(named: (color+String(positionArray[i])+".png"))!
             numButton[i].setImage(img, forState: UIControlState.Normal)
             numButton[i].hidden = false;
-        }
     }
+}
+    
+    // まずはボタンの色をランダムに決める
+    func selectButtonColor() -> String {
+        let array = ["b", "g", "r"]
+        let num = Int(arc4random_uniform(UInt32(array.count)))
+        return array[num]
+}
     
     // 0.01秒ごとに呼び出されて、ゲーム中のタイムを計測する
     func countUp() {
         timerCountLabel.text = "Time: ".stringByAppendingFormat("%.2f", numberCountUp)
         numberCountUp += 0.01
-    }
+}
 
 @IBAction func numButtonAction(sender: UIButton) {
     
